@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=insignia'
+      - 'POSTGRES_PASSWORD=postgres'
+      - 'POSTGRES_USER=postgres'
+    ports:
+      - '5432'
+  pgadmin:
+    image: 'dpage/pgadmin4'
+    environment:
+        - 'PGADMIN_DEFAULT_EMAIL=admin@ad.min'
+        - 'PGADMIN_DEFAULT_PASSWORD=admin'
+    ports:
+        - '5050:80'
