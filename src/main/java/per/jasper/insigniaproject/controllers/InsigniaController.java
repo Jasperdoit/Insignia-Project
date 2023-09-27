@@ -1,40 +1,34 @@
 package per.jasper.insigniaproject.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import per.jasper.insigniaproject.models.Competence;
 import per.jasper.insigniaproject.models.Insignia;
-import per.jasper.insigniaproject.repositories.CompetenceRepository;
-import per.jasper.insigniaproject.repositories.InsigniaRepository;
-import per.jasper.insigniaproject.services.CompetenceService;
 import per.jasper.insigniaproject.services.InsigniaService;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/insignias")
 public class InsigniaController {
-    private final InsigniaRepository insigniaRepository;
-    private final CompetenceRepository competenceRepository;
+    private final InsigniaService insigniaService;
 
-    public InsigniaController(InsigniaRepository insigniaRepository, CompetenceRepository competenceRepository) {
-        this.competenceRepository = competenceRepository;
-        this.insigniaRepository = insigniaRepository;
+    public InsigniaController(InsigniaService insigniaService) {
+        this.insigniaService = insigniaService;
     }
+
     @GetMapping("/")
     public ResponseEntity<List<Insignia>> getAllInsignias() {
-        List<Insignia> insignias = insigniaRepository.findAll();
-        if (insignias.isEmpty()) {
+        List<Insignia> insignias = insigniaService.getAllInsignias();
+        if(insignias == null)
+        {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(insignias, HttpStatus.OK);
     }
     @GetMapping("/{id}")
     public ResponseEntity<Insignia> getInsigniaById(@PathVariable("id") long id) {
-        Insignia insignia = insigniaRepository.findById(id).orElse(null);
+        Insignia insignia = insigniaService.getInsigniaById(id);
         if (insignia == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -42,24 +36,21 @@ public class InsigniaController {
     }
     @PostMapping("/")
     public ResponseEntity<Insignia> createInsignia(@RequestBody Insignia insignia) {
-        Insignia _insignia = new Insignia();
-        _insignia.setName(insignia.getName());
-        _insignia.setDescription(insignia.getDescription());
-        return new ResponseEntity<>(insigniaRepository.save(_insignia), HttpStatus.CREATED);
+        Insignia _insignia = insigniaService.createInsignia(insignia.getName(), insignia.getDescription(), insignia.getImageUri());
+        return new ResponseEntity<>(_insignia, HttpStatus.OK);
     }
     @PutMapping("/{id}")
     public ResponseEntity<Insignia> updateInsignia(@PathVariable("id") long id, @RequestBody Insignia insignia) {
-        Insignia insigniaData = insigniaRepository.findById(id).orElse(null);
-        if (insigniaData == null) {
+        Insignia _insignia = insigniaService.updateInsignia(insignia.getId(), insignia.getName(), insignia.getDescription(), insignia.getImageUri());
+        if(_insignia == null)
+        {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        insigniaData.setName(insignia.getName());
-        insigniaData.setDescription(insignia.getDescription());
-        return new ResponseEntity<>(insigniaRepository.save(insigniaData), HttpStatus.OK);
+        return new ResponseEntity<>(_insignia, HttpStatus.OK);
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteInsignia(@PathVariable("id") long id) {
-        insigniaRepository.deleteById(id);
+        insigniaService.deleteInsignia(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

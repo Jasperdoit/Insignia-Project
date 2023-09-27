@@ -15,5 +15,4 @@ public class Insignia
     String name;
     String description;
     String imageUri;
-//    test
 }
