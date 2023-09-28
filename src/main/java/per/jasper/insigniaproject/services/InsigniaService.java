@@ -30,6 +30,10 @@ public class InsigniaService
     {
         return insigniaRepository.findById(id).orElse(null);
     }
+    public Insignia getInsigniaByCompetenceId(long id)
+    {
+        return insigniaRepository.findByCompetencesId(id);
+    }
     public Insignia createInsignia(String name, String description, String imageUri)
     {
         Insignia insignia = new Insignia();

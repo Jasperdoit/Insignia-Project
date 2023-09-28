@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Insignia Creation</h1>
+    <form action="#" th:action="@{/insignias/}" th:object="${insignia}" method="post">
+        <label>
+            Name:
+            <input type="text" th:field="*{name}"/>
+        </label>
+        <label>
+            Description:
+            <input type="text" th:field="*{description}"/>
+        </label>
+        <label>
+            Image URL:
+            <input type="url" th:field="*{imageUri}">
+        </label>
+        <input type="submit" value="Submit"/>
+    </form>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Insignia Creation</h1>
+    <form action="#" th:action="@{'/insignias/' + ${insignia.getId() + '/update'}}" th:object="${insignia}" method="post">
+        <label>
+            Name:
+            <input type="text" th:field="*{name}" th:value="${insignia.getName()}"/>
+        </label>
+        <label>
+            Description:
+            <input type="text" th:field="*{description}" th:value="${insignia.getDescription()}"/>
+        </label>
+        <label>
+            Image URL:
+            <input type="url" th:field="*{imageUri}" th:value="${insignia.getImageUri()}">
+        </label>
+        <input type="submit" value="Submit"/>
+    </form>
+</body>
+</html>

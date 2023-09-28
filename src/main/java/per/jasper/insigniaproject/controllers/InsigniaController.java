@@ -1,15 +1,18 @@
 package per.jasper.insigniaproject.controllers;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import per.jasper.insigniaproject.models.Insignia;
 import per.jasper.insigniaproject.services.InsigniaService;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/insignias")
+@Controller
 public class InsigniaController {
     private final InsigniaService insigniaService;
 
@@ -17,41 +20,50 @@ public class InsigniaController {
         this.insigniaService = insigniaService;
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<Insignia>> getAllInsignias() {
+    @GetMapping("/insignias/")
+    public String getAllInsignias(Model model)
+    {
         List<Insignia> insignias = insigniaService.getAllInsignias();
-        if(insignias == null)
-        {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(insignias, HttpStatus.OK);
+        model.addAttribute("insignias", insignias);
+        return "Insignias";
     }
-    @GetMapping("/{id}")
-    public ResponseEntity<Insignia> getInsigniaById(@PathVariable("id") long id) {
+    @GetMapping("/insignias/{id}")
+    public String getInsigniaById(Model model, @PathVariable("id") long id)
+    {
         Insignia insignia = insigniaService.getInsigniaById(id);
-        if (insignia == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(insignia, HttpStatus.OK);
+        model.addAttribute("insignia", insignia);
+        return "Insignia";
     }
-    @PostMapping("/")
-    public ResponseEntity<Insignia> createInsignia(@RequestBody Insignia insignia) {
-        Insignia _insignia = insigniaService.createInsignia(insignia.getName(), insignia.getDescription(), insignia.getImageUri());
-        return new ResponseEntity<>(_insignia, HttpStatus.OK);
+    @GetMapping("/insignias/create")
+    public String getInsigniaForm(Model model)
+    {
+        model.addAttribute("insignia", new Insignia());
+        return "Create_Insignia_Form";
     }
-    @PutMapping("/{id}")
-    public ResponseEntity<Insignia> updateInsignia(@PathVariable("id") long id, @RequestBody Insignia insignia) {
-        Insignia _insignia = insigniaService.updateInsignia(insignia.getId(), insignia.getName(), insignia.getDescription(), insignia.getImageUri());
-        if(_insignia == null)
-        {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(_insignia, HttpStatus.OK);
+    @PostMapping("/insignias/")
+    public String createInsignia(@ModelAttribute Insignia insignia)
+    {
+        Insignia returnedInsignia = insigniaService.createInsignia(insignia.getName(), insignia.getDescription(), insignia.getImageUri());
+        return "redirect:/insignias/";
     }
-    @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteInsignia(@PathVariable("id") long id) {
-        insigniaService.deleteInsignia(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @GetMapping("/insignias/{id}/update")
+    public String getUpdateInsigniaForm(Model model, @PathVariable("id") long id)
+    {
+        Insignia insignia = insigniaService.getInsigniaById(id);
+        model.addAttribute("insignia", insignia);
+        return "Update_Insignia_Form";
+    }
+    @PostMapping("/insignias/{id}/update")
+    public String updateInsignia(@PathVariable("id") long id, @ModelAttribute Insignia insignia)
+    {
+        Insignia returnedInsignia = insigniaService.updateInsignia(id, insignia.getName(), insignia.getDescription(), insignia.getImageUri());
+        return "redirect:/insignias/" + returnedInsignia.getId();
     }
 
+    @PostMapping("/insignias/{id}/delete")
+    public String deleteInsignia(@PathVariable("id") long id)
+    {
+        insigniaService.deleteInsignia(id);
+        return "redirect:/insignias/";
+    }
 }

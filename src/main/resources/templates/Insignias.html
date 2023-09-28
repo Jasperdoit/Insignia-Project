@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Insignias</title>
+</head>
+<body>
+    <h1>
+        Insignias
+    </h1>
+    <h2>
+        Insignia Options
+    </h2>
+        <a th:href="@{/insignias/create}">
+            <button>Create Insignia</button>
+        </a>
+    <h2>
+        Insignia List
+    </h2>
+    <div th:each="insignia : ${insignias}">
+        <a th:href="@{'/insignias/' + ${insignia.getId()}}">
+            <button th:text="${insignia.getName()}"></button>
+        </a>
+    </div>
+</body>
+</html>

@@ -2,6 +2,7 @@ package per.jasper.insigniaproject.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import per.jasper.insigniaproject.models.Competence;
+import per.jasper.insigniaproject.models.Insignia;
 
 import java.util.List;
 

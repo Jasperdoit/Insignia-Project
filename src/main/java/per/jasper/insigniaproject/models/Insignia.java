@@ -15,4 +15,7 @@ public class Insignia
     String name;
     String description;
     String imageUri;
+    @OneToMany(mappedBy = "insignia")
+    List<Competence> competences;
+    int requiredCompetences;
 }
