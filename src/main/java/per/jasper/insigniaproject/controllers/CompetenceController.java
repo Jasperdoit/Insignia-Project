@@ -1,65 +1,56 @@
 package per.jasper.insigniaproject.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import per.jasper.insigniaproject.models.Competence;
-import per.jasper.insigniaproject.repositories.CompetenceRepository;
-import per.jasper.insigniaproject.repositories.InsigniaRepository;
+import per.jasper.insigniaproject.models.Insignia;
 import per.jasper.insigniaproject.services.CompetenceService;
+import per.jasper.insigniaproject.services.InsigniaService;
 
 import java.util.List;
 
-@RestController
+@Controller
 public class CompetenceController {
     private final CompetenceService competenceService;
+    private final InsigniaService insigniaService;
 
-    public CompetenceController(CompetenceService competenceService) {
+    public CompetenceController(CompetenceService competenceService, InsigniaService insigniaService) {
         this.competenceService = competenceService;
+        this.insigniaService = insigniaService;
     }
 
-    @GetMapping("insignias/{id}/competences")
-    public ResponseEntity<List<Competence>> getAllCompetencesByInsigniaId(@PathVariable("id") long id) {
-        List<Competence> competences = competenceService.getAllCompetencesByInsigniaId(id);
-        return new ResponseEntity<>(competences, HttpStatus.OK);
-    }
-    @GetMapping("/competences")
-    public ResponseEntity<List<Competence>> getAllCompetences() {
+    @GetMapping("/competences/")
+    public String getAllCompetences(Model model)
+    {
         List<Competence> competences = competenceService.getAllCompetences();
-        return new ResponseEntity<>(competences, HttpStatus.OK);
+        model.addAttribute("competences", competences);
+        return "Competences";
     }
     @GetMapping("/competences/{id}")
-    public ResponseEntity<Competence> getCompetenceById(@PathVariable("id") long id) {
+    public String getCompetenceById(Model model, @PathVariable("id") long id)
+    {
         Competence competence = competenceService.getCompetenceById(id);
-        return competence == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(competence, HttpStatus.OK);
+        model.addAttribute("competence", competence);
+        return "Competence";
     }
 
-    @PostMapping("/insignias/{id}/competences")
-    public ResponseEntity<Competence> createCompetence(@PathVariable("id") long id, @RequestBody Competence competence) {
-        return new ResponseEntity<>(
-                competenceService.createCompetence(competence.getName(), competence.getDescription(), id),
-                HttpStatus.OK
-        );
+    @GetMapping("/competences/create")
+    public String getCompetenceForm(@RequestParam long insigniaId, Model model)
+    {
+        model.addAttribute("competence", new Competence());
+        Insignia insignia = insigniaService.getInsigniaById(insigniaId);
+        model.addAttribute("insignia", insignia);
+        System.out.println(insignia.toString());
+        return "Competence/Create_Competence_Form";
+    }
+    @PostMapping("/competences/")
+    public String createCompetence(@ModelAttribute Competence competence)
+    {
+        System.out.println(competence.toString());
+        Competence returnedCompetence = competenceService.createCompetence(competence.getName(), competence.getDescription(), competence.getInsignia().getId());
+        return "redirect:/competences/";
     }
 
-    @PutMapping("/competences/{id}")
-    public ResponseEntity<Competence> updateCompetence(@PathVariable("id") long id, @RequestBody Competence competence) {
-        return new ResponseEntity<>(
-                competenceService.updateCompetence(id, competence.getName(), competence.getDescription()),
-                HttpStatus.OK
-        );
-    }
-
-    @DeleteMapping("/competences/{id}")
-    public ResponseEntity<HttpStatus> deleteCompetence(@PathVariable("id") long id) {
-        competenceService.deleteCompetence(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @DeleteMapping("/insignias/{id}/competences")
-    public ResponseEntity<HttpStatus> deleteCompetencesByInsigniaId(@PathVariable("id") long id) {
-        competenceService.deleteCompetencesByInsigniaId(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
 }

@@ -28,7 +28,13 @@ public class InsigniaService
     }
     public Insignia getInsigniaById(long id)
     {
-        return insigniaRepository.findById(id).orElse(null);
+        Insignia insignia = insigniaRepository.findById(id).orElse(null);
+        if(insignia == null)
+        {
+            return null;
+        }
+        insignia.setCompetences(competenceRepository.findByInsigniaId(id));
+        return insignia;
     }
     public Insignia getInsigniaByCompetenceId(long id)
     {

@@ -10,6 +10,13 @@
         <p th:text="${insignia.getDescription()}"></p>
         <img th:src="${insignia.getImageUri()}" alt="insignia image"/>
     </div>
+    <h2>Competences</h2>
+    <form th:object="${insignia}" th:action="@{'/competences/create'}" method="get">
+        <input type="hidden" name="insigniaId" th:value="${insignia.getId()}">
+        <input type="submit" value="Add Competence">
+    </form>
+    <div th:each="competence : ${insignia.getCompetences()}">
+    </div>
     <h2>Options</h2>
     <div>
         <a th:href="@{'/insignias/' + ${insignia.getId()} + '/update'}">
